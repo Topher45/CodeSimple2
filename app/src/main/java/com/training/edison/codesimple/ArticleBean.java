@@ -1,0 +1,25 @@
+package com.training.edison.codesimple;
+
+public class ArticleBean {
+    private String mTitle;
+    private String mTime;
+    private String mContent;
+
+    public ArticleBean(String mTitle, String mTime, String mContent) {
+        this.mTitle = mTitle;
+        this.mTime = mTime;
+        this.mContent = mContent;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getTime() {
+        return mTime;
+    }
+
+    public String getContent() {
+        return mContent;
+    }
+}

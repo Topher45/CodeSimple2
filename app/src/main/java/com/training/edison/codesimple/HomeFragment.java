@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -87,4 +89,58 @@ public class HomeFragment extends Fragment {
             mRecyclerView.setAdapter(mAdapter);
         }
     };
+
+    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+
+        private final List<ArticleBean> mArticleBeen;
+
+        public MyAdapter(List<ArticleBean> articleBeanList) {
+            mArticleBeen = articleBeanList;
+        }
+
+        //创建新View，被LayoutManager所调用
+        @Override
+        public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View view = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.item, viewGroup, false);
+            return new ViewHolder(view);
+        }
+
+        //将数据与界面进行绑定的操作
+        @Override
+        public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, int position) {
+            viewHolder.mAtTitle.setText(mArticleBeen.get(position).getTitle());
+            viewHolder.mAtTime.setText(mArticleBeen.get(position).getTime());
+            viewHolder.mAtContent.setText(mArticleBeen.get(position).getContent());
+
+            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), "item onClicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        //获取数据的数量
+        @Override
+        public int getItemCount() {
+            return mArticleBeen.size();
+        }
+
+        //自定义的ViewHolder，持有每个Item的的所有界面元素
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public final View mView;
+            public final TextView mAtTitle;
+            public final TextView mAtContent;
+            public final TextView mAtTime;
+
+            ViewHolder(View view) {
+                super(view);
+                mView = view;
+                mAtTitle = (TextView) view.findViewById(R.id.at_title);
+                mAtTime = (TextView) view.findViewById(R.id.at_time);
+                mAtContent = (TextView) view.findViewById(R.id.at_content);
+            }
+        }
+    }
 }

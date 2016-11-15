@@ -58,17 +58,19 @@ public class HomeFragment extends Fragment {
                     Elements articleInfo = element.select("h1.title");//标题信息
                     Log.i(TAG, "run: articleInfo: " + articleInfo);
                     String title = element.select("h1.title").text().trim();//标题
-                    String link = element.select("h1.title").select("a").attr("href"); //链接
+                    String link = element.select("h1.title").select("a").attr("abs:href"); //相对链接
+                    String time = element.select("div.date").text();
+                    Elements articleContent = element.select("div.p_part");
                     Log.i(TAG, "run: title: " + title);
                     Log.i(TAG, "run: link: " + link);
-                    Elements articleContent = element.select("div.p_part");
+                    Log.i(TAG, "run: time: " + time);
                     Log.i(TAG, "run: articleContent.attr: " + articleContent.select("p").attr(""));
                     String content = "";
                     for (Element ac : articleContent) {
                         Log.i(TAG, "run: ac: " + ac.text());
                         content = content + ac.text() + "\n";
                     }
-                    articleBeanList.add(new ArticleBean(title, "2016-11-11", content));
+                    articleBeanList.add(new ArticleBean(title, time, content, link));
                     Message msg = new Message();
                     Bundle data = new Bundle();
                     msg.setData(data);
@@ -108,7 +110,7 @@ public class HomeFragment extends Fragment {
 
         //将数据与界面进行绑定的操作
         @Override
-        public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, int position) {
+        public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, final int position) {
             viewHolder.mAtTitle.setText(mArticleBeen.get(position).getTitle());
             viewHolder.mAtTime.setText(mArticleBeen.get(position).getTime());
             viewHolder.mAtContent.setText(mArticleBeen.get(position).getContent());
@@ -116,6 +118,7 @@ public class HomeFragment extends Fragment {
             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String link = mArticleBeen.get(position).getLink();
                     Toast.makeText(getContext(), "item onClicked", Toast.LENGTH_SHORT).show();
                 }
             });

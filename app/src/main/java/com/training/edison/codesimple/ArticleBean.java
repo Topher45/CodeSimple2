@@ -4,11 +4,13 @@ public class ArticleBean {
     private String mTitle;
     private String mTime;
     private String mContent;
+    private String mLink;
 
-    public ArticleBean(String mTitle, String mTime, String mContent) {
+    public ArticleBean(String mTitle, String mTime, String mContent, String link) {
         this.mTitle = mTitle;
         this.mTime = mTime;
         this.mContent = mContent;
+        this.mLink = link;
     }
 
     public String getTitle() {
@@ -21,5 +23,9 @@ public class ArticleBean {
 
     public String getContent() {
         return mContent;
+    }
+
+    public String getLink() {
+        return mLink;
     }
 }

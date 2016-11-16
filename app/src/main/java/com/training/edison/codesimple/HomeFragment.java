@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -58,7 +59,7 @@ public class HomeFragment extends Fragment {
                     Elements articleInfo = element.select("h1.title");//标题信息
                     Log.i(TAG, "run: articleInfo: " + articleInfo);
                     String title = element.select("h1.title").text().trim();//标题
-                    String link = element.select("h1.title").select("a").attr("abs:href"); //相对链接
+                    String link = element.select("h1.title").select("a").attr("abs:href"); //链接
                     String time = element.select("div.date").text();
                     Elements articleContent = element.select("div.p_part");
                     Log.i(TAG, "run: title: " + title);
@@ -110,16 +111,18 @@ public class HomeFragment extends Fragment {
 
         //将数据与界面进行绑定的操作
         @Override
-        public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, final int position) {
+        public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, int position) {
             viewHolder.mAtTitle.setText(mArticleBeen.get(position).getTitle());
             viewHolder.mAtTime.setText(mArticleBeen.get(position).getTime());
             viewHolder.mAtContent.setText(mArticleBeen.get(position).getContent());
 
-            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+            viewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    int position = viewHolder.getAdapterPosition();
                     String link = mArticleBeen.get(position).getLink();
-                    Toast.makeText(getContext(), "item onClicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "item onClicked" + position,
+                            Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -132,14 +135,14 @@ public class HomeFragment extends Fragment {
 
         //自定义的ViewHolder，持有每个Item的的所有界面元素
         public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
+            public final CardView mCardView;
             public final TextView mAtTitle;
             public final TextView mAtContent;
             public final TextView mAtTime;
 
             ViewHolder(View view) {
                 super(view);
-                mView = view;
+                mCardView = (CardView) view.findViewById(R.id.card_view);
                 mAtTitle = (TextView) view.findViewById(R.id.at_title);
                 mAtTime = (TextView) view.findViewById(R.id.at_time);
                 mAtContent = (TextView) view.findViewById(R.id.at_content);

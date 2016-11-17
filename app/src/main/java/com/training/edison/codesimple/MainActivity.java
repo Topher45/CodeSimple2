@@ -11,10 +11,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private NavigationView navigationView;
+    private ImageView userHeader;
+    private TextView userName;
+    private TextView userEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +37,12 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        displayView(R.id.nav_camera);
+        userHeader = (ImageView) findViewById(R.id.image_head);
+        View headerView =   navigationView.getHeaderView(0);
+        userName = (TextView) headerView.findViewById(R.id.textView_user_name);
+        userEmail = (TextView) headerView.findViewById(R.id.textView_email);
+        displayUserInfo();
+        displayView(R.id.nav_home);
     }
 
     @Override
@@ -78,18 +90,18 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (viewId) {
-            case R.id.nav_camera:
+            case R.id.nav_home:
                 // Handle the camera action
                 fragment = new HomeFragment();
                 title = "Home";
                 break;
-            case R.id.nav_gallery:
-                fragment = new CategoryFragment();
-                title = "Category";
-                break;
-            case R.id.nav_slideshow:
+            case R.id.nav_archive:
                 fragment = new ArchiveFragment();
                 title = "Archive";
+                break;
+            case R.id.nav_slideshow:
+                fragment = new CategoryFragment();
+                title = "Category";
                 break;
             case R.id.nav_manage:
             case R.id.nav_share:
@@ -111,5 +123,11 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    public void displayUserInfo() {
+        // in case we need to change text
+        userName.setText("Edison");
+        userEmail.setText("hcz017@gmail.com");
     }
 }

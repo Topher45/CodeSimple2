@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        //给图标统一配色
+        navigationView.setItemIconTintList(null);
         userHeader = (ImageView) findViewById(R.id.image_head);
         View headerView =   navigationView.getHeaderView(0);
         userName = (TextView) headerView.findViewById(R.id.textView_user_name);

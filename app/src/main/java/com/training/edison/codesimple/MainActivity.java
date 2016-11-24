@@ -1,9 +1,9 @@
 package com.training.edison.codesimple;
 
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,13 +12,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private NavigationView navigationView;
-    private ImageView userHeader;
+    private CircleImageView userHeader;
     private TextView userName;
     private TextView userEmail;
 
@@ -39,8 +40,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         //给图标统一配色
         navigationView.setItemIconTintList(null);
-        userHeader = (ImageView) findViewById(R.id.image_head);
-        View headerView =   navigationView.getHeaderView(0);
+        View headerView = navigationView.getHeaderView(0);
+        userHeader = (CircleImageView) headerView.findViewById(R.id.profile_image);
         userName = (TextView) headerView.findViewById(R.id.textView_user_name);
         userEmail = (TextView) headerView.findViewById(R.id.textView_email);
         displayUserInfo();
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity
 
     public void displayUserInfo() {
         // in case we need to change text
+        userHeader.setImageResource(R.mipmap.head);
         userName.setText("Edison");
         userEmail.setText("hcz017@gmail.com");
     }

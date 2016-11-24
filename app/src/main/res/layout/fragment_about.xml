@@ -5,13 +5,15 @@
     android:background="#3d4349"
     android:orientation="vertical">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile_image"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/head_circle" />
+        android:src="@mipmap/head"
+        app:civ_border_color="#b1696363"
+        app:civ_border_width="1dp" />
 
     <TextView
         android:layout_width="wrap_content"

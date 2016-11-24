@@ -1,5 +1,6 @@
 package com.training.edison.codesimple;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -121,8 +121,11 @@ public class HomeFragment extends Fragment {
                 public void onClick(View v) {
                     int position = viewHolder.getAdapterPosition();
                     String link = mArticleBeen.get(position).getLink();
-                    Toast.makeText(getContext(), "item onClicked" + position,
-                            Toast.LENGTH_SHORT).show();
+                    String title = mArticleBeen.get(position).getTitle();
+                    Intent articlePost = new Intent(getActivity(), ArticleActivity.class);
+                    articlePost.putExtra(ArticleBean.LINK, link);
+                    articlePost.putExtra(ArticleBean.TITLE,title);
+                    startActivity(articlePost);
                 }
             });
         }

@@ -1,9 +1,8 @@
 package com.training.edison.codesimple;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,7 +34,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_home, container, false);
-        new Thread(runnable).start();
+        MyAsyncTask mAsyncTask = new MyAsyncTask();
+        mAsyncTask.execute();
         mRecyclerView = (RecyclerView) parentView.findViewById(R.id.my_recycler_view);
         //创建默认的线性LayoutManager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -45,9 +45,9 @@ public class HomeFragment extends Fragment {
         return parentView;
     }
 
-    private final Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
+    private class MyAsyncTask extends AsyncTask<Object, Object, List<ArticleBean>> {
+
+        protected List<ArticleBean> doInBackground(Object... urls) {
             Document doc;
             try {
                 //URL加载一个Document
@@ -72,26 +72,19 @@ public class HomeFragment extends Fragment {
                         content = content + ac.text() + "\n";
                     }
                     articleBeanList.add(new ArticleBean(title, time, content, link));
-                    Message msg = new Message();
-                    Bundle data = new Bundle();
-                    msg.setData(data);
-                    handler.sendMessage(msg);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return articleBeanList;
         }
-    };
 
-    private final Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+        protected void onPostExecute(List<ArticleBean> result) {
             //创建并设置Adapter
             MyAdapter mAdapter = new MyAdapter(articleBeanList);
             mRecyclerView.setAdapter(mAdapter);
         }
-    };
+    }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 

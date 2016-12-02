@@ -11,9 +11,10 @@
 ---
 2016-12-01
 - 主页使用AsyncTask
+- About页面使用单独的Activity
   
 ---
 
 TODO
 - 添加权限申请
-- About页面使用单独的Activity
+- 显示文章内容

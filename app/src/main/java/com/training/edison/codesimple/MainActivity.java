@@ -1,5 +1,6 @@
 package com.training.edison.codesimple;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String TAG = "MainActivity";
     private NavigationView navigationView;
     private CircleImageView userHeader;
     private TextView userName;
@@ -91,7 +95,7 @@ public class MainActivity extends AppCompatActivity
     private void displayView(int viewId) {
         navigationView.setCheckedItem(viewId);
         Fragment fragment = null;
-        String title = getString(R.string.app_name);
+        String title = null;
         switch (viewId) {
             case R.id.nav_home:
                 // Handle the camera action
@@ -108,10 +112,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_manage:
             case R.id.nav_share:
-            case R.id.nav_send:
-                fragment = new AboutFragment();
-                title = "About";
+            case R.id.nav_about:
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
                 break;
+            default:
+                return;
         }
 
         if (fragment != null) {
@@ -120,7 +126,8 @@ public class MainActivity extends AppCompatActivity
             ft.commit();
         }
         // set the toolbar title
-        if (getSupportActionBar() != null) {
+        if (fragment != null && getSupportActionBar() != null) {
+            Log.d(TAG, "displayView: title " + title);
             getSupportActionBar().setTitle(title);
         }
 

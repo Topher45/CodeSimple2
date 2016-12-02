@@ -4,6 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="about_activity">About</string>
     <string name="one_world_about">整天想代码，半个厨子心。</string>
     <string name="about_author">关于作者</string>
     <string name="slog">Codes make life simple.</string>

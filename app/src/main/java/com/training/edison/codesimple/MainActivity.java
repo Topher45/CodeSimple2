@@ -22,17 +22,10 @@ import android.widget.Toast;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks,
+public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int RC_SETTINGS_SCREEN = 125;
-    private static final int RC_CAMERA = 126;
-    private static final int RC_STORAGE = 127;
-    private static final int RC_CAMERA_STORAGE = 127;
     private static final String TAG = "MainActivity";
     private NavigationView navigationView;
     private CircleImageView userHeader;
@@ -62,61 +55,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         userEmail = (TextView) headerView.findViewById(R.id.textView_email);
         displayUserInfo();
         displayView(R.id.nav_home);
-        methodRequiresTwoPermission();
-    }
-
-    @AfterPermissionGranted(RC_CAMERA_STORAGE)
-    private void methodRequiresTwoPermission() {
-        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            // Already have permission, do the thing
-            // ...
-        } else {
-            // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(this,
-                    getString(R.string.rationale_camera_and_storage), RC_CAMERA_STORAGE, perms);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsGranted:" + requestCode + ":" + perms.size());
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.d(TAG, "onPermissionsDenied:" + requestCode + ":" + perms.size());
-
-        // (Optional) Check whether the user denied any permissions and checked "NEVER ASK AGAIN."
-        // This will display a dialog directing them to enable the permission in app settings.
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this, getString(R.string.rationale_ask_again))
-                    .setTitle(getString(R.string.title_settings_dialog))
-                    .setPositiveButton(getString(R.string.setting))
-                    .setNegativeButton(getString(R.string.cancel), null /* click listener */)
-                    .setRequestCode(RC_SETTINGS_SCREEN)
-                    .build()
-                    .show();
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_SETTINGS_SCREEN) {
-            // Do something after user returned from app settings screen, like showing a Toast.
-            Toast.makeText(this, R.string.returned_from_app_settings_to_activity, Toast.LENGTH_SHORT)
-                    .show();
-        }
     }
 
     @Override
@@ -167,18 +105,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             case R.id.nav_home:
                 // Handle the camera action
                 fragment = new HomeFragment();
-                title = "Home";
+                title = getString(R.string.home);
                 break;
             case R.id.nav_archive:
                 fragment = new ArchiveFragment();
-                title = "Archive";
+                title = getString(R.string.archive);
                 break;
-            case R.id.nav_slideshow:
-                fragment = new CategoryFragment();
-                title = "Category";
-                break;
-            case R.id.nav_manage:
-            case R.id.nav_share:
             case R.id.nav_about:
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
                 startActivity(aboutIntent);
@@ -204,8 +136,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void displayUserInfo() {
         // in case we need to change text
-        userHeader.setImageResource(R.mipmap.head);
-        userName.setText("Edison");
-        userEmail.setText("hcz017@gmail.com");
+        userHeader.setImageResource(R.drawable.head_author);
+        userName.setText(R.string.user_name);
+        userEmail.setText(R.string.email_add);
     }
 }

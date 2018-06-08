@@ -11,7 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,17 +22,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HomeFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private static final String TAG = "HomeFragment";
     private List<ArticleBean> articleBeanList = new ArrayList<>();
+    // img
+    private static final String IMG_URL_REG = "<img.*src=(.*?)[^>]*?>";
+    // img src
+    private static final String IMG_SRC_REG = "(http|https:)(.*?)(png|jpg|gif)(.*?)(?=\")";
 
     public HomeFragment() {
     }
@@ -55,28 +60,30 @@ public class HomeFragment extends Fragment {
             Document doc;
             try {
                 //URL加载一个Document
-                doc = Jsoup.connect("http://codesimple.farbox.com/").get();
+                doc = Jsoup.connect(Utils.BLOG_URL).get();
                 //使用DOM方法来遍历文档，并抽取元素
                 //每一篇文章
                 Elements elements = doc.select("article.post");
                 for (Element element : elements) {
-                    Elements articleInfo = element.select("h1.title");//标题信息
-                    Log.i(TAG, "run: articleInfo: " + articleInfo);
                     String title = element.select("h1.title").text().trim();//标题
                     String link = element.select("h1.title").select("a").attr("abs:href"); //链接
                     String time = element.select("div.date").text();
-                    time = formatDate(time);
+                    time = Utils.formatDate(time);
+                    String imgUrl="";
                     Elements articleContent = element.select("div.p_part");
-                    Log.i(TAG, "run: title: " + title);
-                    Log.i(TAG, "run: link: " + link);
-                    Log.i(TAG, "run: time: " + time);
-                    Log.i(TAG, "run: articleContent.attr: " + articleContent.select("p").attr(""));
-                    String content = "";
-                    for (Element ac : articleContent) {
-                        Log.i(TAG, "run: ac: " + ac.text());
-                        content = content + ac.text() + "\n";
+                    final Pattern pattern = Pattern.compile(IMG_SRC_REG);
+                    final Matcher matcher = pattern.matcher(articleContent.toString());
+                    if (matcher.find()){
+                        imgUrl = matcher.group();
                     }
-                    articleBeanList.add(new ArticleBean(title, time, content, link));
+
+                    Log.d(TAG, "run: title: " + title);
+                    Log.d(TAG, "run: link: " + link);
+                    Log.d(TAG, "run: time: " + time);
+                    Log.d(TAG, "run: imgUrl: " + imgUrl);
+                    String content = (articleContent.select("p").toString()).replaceAll("<p>", "")
+                            .replaceAll("</p>", "").replaceAll(IMG_URL_REG, "[图片]");
+                    articleBeanList.add(new ArticleBean(title, time, content, link, imgUrl));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -91,25 +98,12 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    //格式化时间
-    public String formatDate(String date) {
-        DateFormat dateFormat = SimpleDateFormat.getDateInstance();
-        SimpleDateFormat transToDate = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
-        String localDate = null;
-        try {
-            localDate = dateFormat.format(transToDate.parse(date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return localDate;
-    }
-
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-        private final List<ArticleBean> mArticleBeen;
+        private final List<ArticleBean> mArticleBeanList;
 
         public MyAdapter(List<ArticleBean> articleBeanList) {
-            mArticleBeen = articleBeanList;
+            mArticleBeanList = articleBeanList;
         }
 
         //创建新View，被LayoutManager所调用
@@ -123,16 +117,22 @@ public class HomeFragment extends Fragment {
         //将数据与界面进行绑定的操作
         @Override
         public void onBindViewHolder(final MyAdapter.ViewHolder viewHolder, int position) {
-            viewHolder.mAtTitle.setText(mArticleBeen.get(position).getTitle());
-            viewHolder.mAtTime.setText(mArticleBeen.get(position).getTime());
-            viewHolder.mAtContent.setText(mArticleBeen.get(position).getContent());
+            ArticleBean articleBean = mArticleBeanList.get(position);
+            viewHolder.mAtTitle.setText(articleBean.getTitle());
+            viewHolder.mAtTime.setText(articleBean.getTime());
+            viewHolder.mAtContent.setText(articleBean.getContent());
+            String imgUrl = articleBean.getImgUrl();
+            if (imgUrl != null && !imgUrl.isEmpty()){
+                Picasso.get().load(imgUrl).into(viewHolder.mAtImage);
+                viewHolder.mAtImage.setVisibility(View.VISIBLE);
+            }
 
             viewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = viewHolder.getAdapterPosition();
-                    String link = mArticleBeen.get(position).getLink();
-                    String title = mArticleBeen.get(position).getTitle();
+                    String link = mArticleBeanList.get(position).getLink();
+                    String title = mArticleBeanList.get(position).getTitle();
                     Intent articlePost = new Intent(getActivity(), ArticleActivity.class);
                     articlePost.putExtra(ArticleBean.LINK, link);
                     articlePost.putExtra(ArticleBean.TITLE,title);
@@ -144,7 +144,7 @@ public class HomeFragment extends Fragment {
         //获取数据的数量
         @Override
         public int getItemCount() {
-            return mArticleBeen.size();
+            return mArticleBeanList.size();
         }
 
         //自定义的ViewHolder，持有每个Item的的所有界面元素
@@ -153,13 +153,15 @@ public class HomeFragment extends Fragment {
             public final TextView mAtTitle;
             public final TextView mAtContent;
             public final TextView mAtTime;
+            public final ImageView mAtImage;
 
             ViewHolder(View view) {
                 super(view);
-                mCardView = (CardView) view.findViewById(R.id.card_view);
-                mAtTitle = (TextView) view.findViewById(R.id.at_title);
-                mAtTime = (TextView) view.findViewById(R.id.at_time);
-                mAtContent = (TextView) view.findViewById(R.id.at_content);
+                mCardView = view.findViewById(R.id.card_view);
+                mAtTitle = view.findViewById(R.id.at_title);
+                mAtTime = view.findViewById(R.id.at_time);
+                mAtContent = view.findViewById(R.id.at_content);
+                mAtImage = view.findViewById(R.id.at_img);
             }
         }
     }

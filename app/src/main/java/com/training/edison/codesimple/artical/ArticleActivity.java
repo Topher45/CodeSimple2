@@ -1,5 +1,7 @@
-package com.training.edison.codesimple;
+package com.training.edison.codesimple.artical;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -8,6 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.training.edison.codesimple.R;
+import com.training.edison.codesimple.utils.Utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -41,6 +46,13 @@ public class ArticleActivity extends AppCompatActivity {
         mAsyncTask.execute();
     }
 
+    public static void startActivity(Context context, String link, String title){
+        Intent articlePost = new Intent(context, ArticleActivity.class);
+        articlePost.putExtra(ArticleBean.LINK, link);
+        articlePost.putExtra(ArticleBean.TITLE,title);
+        context.startActivity(articlePost);
+    }
+
     private class MyAsyncTask extends AsyncTask<Object, Object, String> {
 
         protected String doInBackground(Object... urls) {
@@ -50,7 +62,7 @@ public class ArticleActivity extends AppCompatActivity {
                 doc = Jsoup.connect(mLink).get();
                 postBody = doc.select("div.p_part").toString();
                 postBody = postBody.replaceAll("/_image", Utils.BLOG_URL + "/_image");
-                Log.i(TAG, "doInBackground: elements.toString\n" + postBody);
+//                Log.i(TAG, "doInBackground: elements.toString\n" + postBody);
             } catch (IOException e) {
                 e.printStackTrace();
             }

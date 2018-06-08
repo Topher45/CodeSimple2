@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import com.training.edison.codesimple.home.HomeFragment;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements
